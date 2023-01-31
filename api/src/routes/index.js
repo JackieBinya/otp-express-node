@@ -1,5 +1,5 @@
 import express from 'express';
-import otpRoutes from './otp.routes.js'
+import otpRoutes from './otp.routes.js';
 
 const router = express.Router();
 
