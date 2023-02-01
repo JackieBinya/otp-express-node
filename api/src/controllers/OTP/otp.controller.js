@@ -65,7 +65,7 @@ const createOtp = async (req, res) => {
 				await sendMail({
 					to: email,
 					subject: 'One Time Password - OTP',
-					body: templates.otpIssuedEmailTemplate({otp}) ,
+					body: templates.otpIssuedEmailTemplate({ otp }),
 				});
 				return res.status(200).json({
 					success: true,
@@ -91,7 +91,7 @@ const createOtp = async (req, res) => {
 		await sendMail({
 			to: email,
 			subject: 'One Time Password - OTP',
-			body: templates.otpIssuedEmailTemplate({otp: newOtp}) ,
+			body: templates.otpIssuedEmailTemplate({ otp: newOtp }),
 		});
 		// Write otp record in the db
 		const record = await Otp.create({

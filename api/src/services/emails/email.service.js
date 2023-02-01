@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
 		pass: process.env.MAIL_PASSWORD,
 	},
 	tls: {
-        ciphers:'SSLv3'
-    },
+		ciphers: 'SSLv3',
+	},
 	secure: false,
 });
 
@@ -45,6 +45,4 @@ const sendMail = ({ to, cc, subject: _subject, body, attachments = [] }) => {
 	});
 };
 
-export {
-	sendMail,
-};
+export { sendMail };
