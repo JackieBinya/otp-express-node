@@ -1,9 +1,9 @@
 import { Model, DataTypes } from 'sequelize';
 import db from '../db/index.js';
 
-class OPT extends Model {}
+class Otp extends Model {}
 
-OTP.init(
+Otp.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -18,16 +18,20 @@ OTP.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		ip: {
-			type: DataTypes.STRING,
+		created_at: {
+			type: DataTypes.DATE,
 			allowNull: false,
 		},
 	},
 	{
-		timestamps: true,
+		timestamps: false,
 		sequelize: db,
 		modelName: 'otp',
 	}
 );
 
-export default OTP;
+Otp.sync()
+	.then(() => console.log('OTP TABLE created'))
+	.catch((error) => console.log(`${Error} occured creating the OTP Table`));
+
+export default Otp;
