@@ -2,6 +2,8 @@ import otpGenerator from 'otp-generator';
 import { sub, add, isBefore } from 'date-fns';
 import { Op } from 'sequelize';
 import Otp from '../../models/Otp.js';
+import { sendMail } from '../../services/emails/email.service.js';
+import { templates } from '../../services/emails/templates/index.js';
 
 const createOtp = async (req, res) => {
 	try {
@@ -52,12 +54,19 @@ const createOtp = async (req, res) => {
 			console.log('🌕🌕🌕🌕', oldOtpRecords[0]['created_at']);
 			const oldOtpIssueDate = oldOtpRecords[0]['created_at'];
 			const expirationOfOldOtp = add(oldOtpIssueDate, {
-				minutes: 5, //Replace with .env variable
+				minutes: process.env.OTP_VALIDITY_TIME_IN_MINUTES,
 			});
 			console.log('🌕🌕🌕🌕', expirationOfOldOtp);
 
+			const otp = oldOtpRecords[0].otp;
+
 			if (isBefore(currentTime, expirationOfOldOtp)) {
-				console.log('🦄🦄🦄🦄 Sending the old otp it is still valid');
+				console.log(`🦄🦄🦄🦄 Sending the old otp to ${email}`);
+				await sendMail({
+					to: email,
+					subject: 'One Time Password - OTP',
+					body: templates.otpIssuedEmailTemplate({otp}) ,
+				});
 				return res.status(200).json({
 					success: true,
 				});
@@ -79,6 +88,11 @@ const createOtp = async (req, res) => {
 		}
 
 		// Email the user the new otp
+		await sendMail({
+			to: email,
+			subject: 'One Time Password - OTP',
+			body: templates.otpIssuedEmailTemplate({otp: newOtp}) ,
+		});
 		// Write otp record in the db
 		const record = await Otp.create({
 			email: req.body.email,

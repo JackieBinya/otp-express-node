@@ -31,7 +31,7 @@ Otp.init(
 );
 
 Otp.sync()
-	.then(() => console.log('OTP TABLE created'))
-	.catch((error) => console.log(`${Error} occured creating the OTP Table`));
+	.then(() => console.log('OTP TABLE created...'))
+	.catch((error) => console.log(error));
 
 export default Otp;
