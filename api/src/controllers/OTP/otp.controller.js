@@ -60,13 +60,26 @@ const createOtp = async (req, res) => {
 
 			const otp = oldOtpRecords[0].otp;
 
-			if (isBefore(currentTime, expirationOfOldOtp)) {
+			if (
+				isBefore(currentTime, expirationOfOldOtp) &&
+				!oldOtpRecords[0].is_used
+			) {
 				console.log(`🦄🦄🦄🦄 Sending the old otp to ${email}`);
 				await sendMail({
 					to: email,
 					subject: 'One Time Password - OTP',
 					body: templates.otpIssuedEmailTemplate({ otp }),
 				});
+
+				await Otp.update(
+					{ created_at: new Date() },
+					{
+						where: {
+							id: oldOtpRecords[0].id,
+						},
+					}
+				);
+
 				return res.status(200).json({
 					success: true,
 				});
@@ -118,6 +131,91 @@ const createOtp = async (req, res) => {
 	}
 };
 
-const validateOtp = (req, res) => res.send('Validate OTP');
+const verifyOtp = async (req, res) => {
+	try {
+		const { otp, email } = req.body;
 
-export { createOtp, validateOtp };
+		if (!email) {
+			return res.status(400).json({
+				success: false,
+				error: 'The email field is required',
+			});
+		}
+
+		if (!otp) {
+			return res.status(400).json({
+				success: false,
+				error: 'The otp field is required',
+			});
+		}
+
+		// Check if otp is expired
+		const otpItem = await Otp.findOne({
+			where: {
+				email,
+				otp,
+			},
+		});
+
+		if (!otpItem) {
+			return res.status(404).json({
+				success: false,
+				error: `The OTP ${otp} which belongs to ${email} was not found in the system`,
+			});
+		}
+
+		const expirationTimeForOtpItem = add(otpItem.created_at, {
+			seconds: 30,
+		});
+
+		if (!isBefore(new Date(), expirationTimeForOtpItem)) {
+			return res.status(403).json({
+				success: false,
+				error: `The OTP ${otp} which belongs to ${email} has expired, please request a new OTP`,
+			});
+		}
+		// Check if user submitted the latest OTP
+		const otpsIssuedToUser = await Otp.findAll({
+			where: {
+				email,
+			},
+			order: [['created_at', 'DESC']],
+		});
+
+		if (otp !== otpsIssuedToUser[0].otp) {
+			return res.status(403).json({
+				success: false,
+				error: `Please submit the most recent OTP you were issued with by the system`,
+			});
+		}
+		// Check if otp has been used previously
+		if (otpItem.is_used) {
+			return res.status(403).json({
+				success: false,
+				error: `The OTP ${otp} which belongs to ${email} has has been used previously, please request a new OTP`,
+			});
+		}
+		// Flag otp as used
+		await Otp.update(
+			{ is_used: true },
+			{
+				where: {
+					id: otpItem.id,
+				},
+			}
+		);
+
+		return res.status(200).json({
+			success: true,
+			message: 'OTP has been verified successfully',
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			success: false,
+			error: 'Something went wrong, please try again later.',
+		});
+	}
+};
+
+export { createOtp, verifyOtp };

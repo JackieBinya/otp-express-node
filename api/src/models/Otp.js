@@ -18,6 +18,10 @@ Otp.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		is_used: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 		created_at: {
 			type: DataTypes.DATE,
 			allowNull: false,
@@ -33,5 +37,9 @@ Otp.init(
 Otp.sync()
 	.then(() => console.log('OTP TABLE created...'))
 	.catch((error) => console.log(error));
+
+// Otp.drop()
+// .then(() => console.log('OTP TABLE dropped...'))
+// .catch((error) => console.log(error));
 
 export default Otp;
