@@ -1,5 +1,7 @@
 import express from 'express';
 import { engine } from 'express-handlebars';
+import helmet from 'helmet';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import apiRoutes from './routes/index.js';
@@ -15,6 +17,8 @@ app.set('views', './views');
 
 app.use(express.static(path.join(__dirname, '/public')));
 
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
