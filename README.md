@@ -1,3 +1,14 @@
-# Test
+# OTP Generator
 
-Welcome to your test! The instructions for the test should have been sent via email, this is just the place for you to write your code and ensure it's all working correctly.
+## Tech Stack
+- [Node.js]
+- [Express.js]
+- [Express-Handlebar]
+
+## To run the app in your development environment
+- Use the command
+```
+npm run dev
+```
+
+
