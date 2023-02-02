@@ -50,40 +50,6 @@ const createOtp = async (req, res) => {
 			otps = oldOtpRecords.map((el) => el.otp);
 
 			console.log('🔫🔫🔫🔫🔫', otps);
-
-			console.log('🌕🌕🌕🌕', oldOtpRecords[0]['created_at']);
-			const oldOtpIssueDate = oldOtpRecords[0]['created_at'];
-			const expirationOfOldOtp = add(oldOtpIssueDate, {
-				minutes: process.env.OTP_LIFE_SPAN_IN_MINUTES,
-			});
-			console.log('🌕🌕🌕🌕', expirationOfOldOtp);
-
-			const otp = oldOtpRecords[0].otp;
-
-			if (
-				isBefore(currentTime, expirationOfOldOtp) &&
-				!oldOtpRecords[0].is_used
-			) {
-				console.log(`🦄🦄🦄🦄 Sending the old otp to ${email}`);
-				await sendMail({
-					to: email,
-					subject: 'One Time Password - OTP',
-					body: templates.otpIssuedEmailTemplate({ otp }),
-				});
-
-				await Otp.update(
-					{ created_at: new Date() },
-					{
-						where: {
-							id: oldOtpRecords[0].id,
-						},
-					}
-				);
-
-				return res.status(201).json({
-					success: true,
-				});
-			}
 		}
 		// Generate OTP, check that the new otp was not issued to the same user in the last 24hrs - otherwise generate a new otp
 		let newOtp = otpGenerator.generate(6, {
@@ -174,7 +140,7 @@ const verifyOtp = async (req, res) => {
 		if (!isBefore(new Date(), expirationTimeForOtpItem)) {
 			return res.status(403).json({
 				success: false,
-				error: `The OTP ${otp} which belongs to ${email} has expired, please request a new OTP`,
+				error: `The submitted OTP has expired, please request a new OTP`,
 			});
 		}
 		// Check if user submitted the latest OTP
@@ -215,4 +181,85 @@ const verifyOtp = async (req, res) => {
 	}
 };
 
-export { createOtp, verifyOtp };
+const resendOtp = async (req, res) => {
+	try {
+		const { otp, email } = req.body;
+
+		if (!email) {
+			return res.status(400).json({
+				success: false,
+				error: 'The email field is required',
+			});
+		}
+
+		if (!otp) {
+			return res.status(400).json({
+				success: false,
+				error: 'The otp field is required',
+			});
+		}
+
+		// Check if otp is expired
+		const otpItem = await Otp.findOne({
+			where: {
+				email,
+				otp,
+			},
+		});
+
+		if (!otpItem) {
+			return res.status(404).json({
+				success: false,
+				error: `The OTP ${otp} which belongs to ${email} was not found in the system`,
+			});
+		}
+
+		const oldOtpIssueDate = otpItem['created_at'];
+
+		const expirationOfOldOtp = add(oldOtpIssueDate, {
+			minutes: process.env.OTP_LIFE_SPAN_IN_MINUTES,
+		});
+		console.log('🌕🌕🌕🌕', expirationOfOldOtp);
+
+		if (!isBefore(new Date(), expirationOfOldOtp)) {
+			return res.status(400).json({
+				success: false,
+				error: 'Cannot perform operation, please request a new OTP',
+			});
+		}
+
+		if (otpItem.is_used) {
+			return res.status(400).json({
+				success: false,
+				error: 'The submitted OTP has been used, please request a new OTP',
+			});
+		}
+		console.log(`🦄🦄🦄🦄 Re-sending the old otp to ${email}`);
+		await sendMail({
+			to: email,
+			subject: 'Reset One Time Password - OTP',
+			body: templates.otpIssuedEmailTemplate({ otp }),
+		});
+
+		await Otp.update(
+			{ created_at: new Date() },
+			{
+				where: {
+					id: otpItem.id,
+				},
+			}
+		);
+
+		return res.status(200).json({
+			success: true,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			success: false,
+			error: 'Something went wrong, please try again later.',
+		});
+	}
+};
+
+export { createOtp, verifyOtp, resendOtp };

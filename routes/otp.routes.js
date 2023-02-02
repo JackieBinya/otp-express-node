@@ -1,7 +1,11 @@
 import express from 'express';
 
 import rateLimit from 'express-rate-limit';
-import { createOtp, verifyOtp } from '../api/controllers/OTP/otp.controller.js';
+import {
+	createOtp,
+	verifyOtp,
+	resendOtp,
+} from '../api/controllers/OTP/otp.controller.js';
 
 const router = express.Router();
 
@@ -18,5 +22,6 @@ const otpRateLimiter = rateLimit({
 
 router.post('/create', otpRateLimiter, createOtp);
 router.post('/verify', verifyOtp);
+router.post('/resend', resendOtp);
 
 export default router;
