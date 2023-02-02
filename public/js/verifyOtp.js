@@ -35,3 +35,8 @@ verifyOtpForm.addEventListener("submit", async(e) => {
       verifyOtpFormErrorMessage.textContent ='Something happened, please try again later!';
     }
   });
+
+  document.addEventListener('keydown',e => {
+    verifyOtpFormErrorMessage.textContent = '';
+    verifyOtpFormSuccessMessage.textContent= '';
+  });

@@ -35,3 +35,8 @@ createOtpForm.addEventListener("submit", async(e) => {
       createOtpFormErrorMessage.textContent ='Something happened, please try again later!';
     }
   });
+
+  document.addEventListener('keydown',e => {
+    createOtpFormErrorMessage.textContent = '';
+    createOtpFormSuccessMessage.textContent= '';
+  });
