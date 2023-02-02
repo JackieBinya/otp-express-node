@@ -28,4 +28,8 @@ app.get('/health-check', (req, res) => {
 	res.send('OTP server is running...');
 });
 
+app.get('*', function(req, res){
+	res.render('404');
+  });
+
 export { app };
