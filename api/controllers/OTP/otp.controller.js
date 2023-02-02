@@ -80,7 +80,7 @@ const createOtp = async (req, res) => {
 					}
 				);
 
-				return res.status(200).json({
+				return res.status(201).json({
 					success: true,
 				});
 			}
@@ -110,17 +110,12 @@ const createOtp = async (req, res) => {
 		const record = await Otp.create({
 			email: req.body.email,
 			otp: newOtp,
-			created_at: currentTime,
+			created_at: new Date(),
 		});
 
 		console.log('🟢🟢🟢🟢🟢', record);
-		return res.status(200).json({
+		return res.status(201).json({
 			success: true,
-			data: {
-				otp: newOtp,
-				currentTime,
-				twentyFourHoursAgo,
-			},
 		});
 	} catch (error) {
 		console.log(error);
@@ -164,13 +159,13 @@ const verifyOtp = async (req, res) => {
 			});
 		}
 
-			// Check if otp has been used previously
-			if (otpItem.is_used) {
-				return res.status(403).json({
-					success: false,
-					error: `The OTP ${otp} which belongs to ${email} has has been used previously, please request a new OTP`,
-				});
-			}
+		// Check if otp has been used previously
+		if (otpItem.is_used) {
+			return res.status(403).json({
+				success: false,
+				error: `The OTP ${otp} which belongs to ${email} has has been used previously, please request a new OTP`,
+			});
+		}
 
 		const expirationTimeForOtpItem = add(otpItem.created_at, {
 			seconds: process.env.OTP_EXPIRATION_TIME_IN_SECONDS,
@@ -196,7 +191,7 @@ const verifyOtp = async (req, res) => {
 				error: `Please submit the most recent OTP you were issued with by the system`,
 			});
 		}
-		
+
 		// Flag otp as used
 		await Otp.update(
 			{ is_used: true },
