@@ -43,13 +43,10 @@ const createOtp = async (req, res) => {
 
 		let otps = [];
 
-		console.log('🔴🔴🔴🔴', oldOtpRecords);
 		// Check if last OTP is still valid - an otp has a lifespan of 5mins
 		if (oldOtpRecords.length > 0) {
 			// Filter otps
 			otps = oldOtpRecords.map((el) => el.otp);
-
-			console.log('🔫🔫🔫🔫🔫', otps);
 		}
 		// Generate OTP, check that the new otp was not issued to the same user in the last 24hrs - otherwise generate a new otp
 		let newOtp = otpGenerator.generate(6, {
@@ -79,7 +76,6 @@ const createOtp = async (req, res) => {
 			created_at: new Date(),
 		});
 
-		console.log('🟢🟢🟢🟢🟢', record);
 		return res.status(201).json({
 			success: true,
 		});
