@@ -4,7 +4,7 @@ const verifyOtpForm = document.querySelector("#verifyOtpForm");
 const createOtpFormSuccessMessage = createOtpForm.querySelectorAll("span.success-message")[0];
 const createOtpFormErrorMessage = createOtpForm.querySelectorAll("span.error-message")[0];
 
-const verifyOtpSuccessMessage = createOtpForm.querySelectorAll("span.success-message")[0];
+const verifyOtpFormSuccessMessage = createOtpForm.querySelectorAll("span.success-message")[0];
 const verifyOtpFormErrorMessage = createOtpForm.querySelectorAll("span.error-message")[0];
 
 createOtpForm.addEventListener("submit", async(e) => {
