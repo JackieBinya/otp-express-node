@@ -54,7 +54,7 @@ const createOtp = async (req, res) => {
 			console.log('🌕🌕🌕🌕', oldOtpRecords[0]['created_at']);
 			const oldOtpIssueDate = oldOtpRecords[0]['created_at'];
 			const expirationOfOldOtp = add(oldOtpIssueDate, {
-				minutes: process.env.OTP_VALIDITY_TIME_IN_MINUTES,
+				minutes: process.env.OTP_LIFE_SPAN_IN_MINUTES,
 			});
 			console.log('🌕🌕🌕🌕', expirationOfOldOtp);
 
@@ -164,8 +164,16 @@ const verifyOtp = async (req, res) => {
 			});
 		}
 
+			// Check if otp has been used previously
+			if (otpItem.is_used) {
+				return res.status(403).json({
+					success: false,
+					error: `The OTP ${otp} which belongs to ${email} has has been used previously, please request a new OTP`,
+				});
+			}
+
 		const expirationTimeForOtpItem = add(otpItem.created_at, {
-			seconds: 30,
+			seconds: process.env.OTP_EXPIRATION_TIME_IN_SECONDS,
 		});
 
 		if (!isBefore(new Date(), expirationTimeForOtpItem)) {
@@ -188,13 +196,7 @@ const verifyOtp = async (req, res) => {
 				error: `Please submit the most recent OTP you were issued with by the system`,
 			});
 		}
-		// Check if otp has been used previously
-		if (otpItem.is_used) {
-			return res.status(403).json({
-				success: false,
-				error: `The OTP ${otp} which belongs to ${email} has has been used previously, please request a new OTP`,
-			});
-		}
+		
 		// Flag otp as used
 		await Otp.update(
 			{ is_used: true },

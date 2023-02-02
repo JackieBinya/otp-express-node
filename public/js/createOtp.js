@@ -38,5 +38,5 @@ createOtpForm.addEventListener("submit", async(e) => {
 
   document.addEventListener('keydown',e => {
     createOtpFormErrorMessage.textContent = '';
-    createOtpFormSuccessMessage.textContent= '';
+    createOtpFormSuccessMessage.textContent = '';
   });
