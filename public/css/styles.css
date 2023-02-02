@@ -45,6 +45,10 @@ input {
   padding: 0.5em;
 }
 
+label{
+  font-weight: 500;
+}
+
 span.success-message, span.error-message  {
   display: block;
   padding: 0 0 0.8em 0;
