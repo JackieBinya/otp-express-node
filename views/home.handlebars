@@ -1,11 +1,11 @@
-<div class="create-otp-container">
+<div class="container">
     <h1>One Time Password(OTP) Generator</h1>
    
     <form  id="createOtpForm">
         <span class="success-message"></span>
         <span class="error-message"></span>
         <label for="Email">Email</label>
-        <input type="email" name="email" id="">
+        <input type="text" pattern="[^@\s]+@[^@\s]+" title="Invalid email address" name="email" required>
         <button type="submit">Generate OTP</button>
     </form>
 </div>

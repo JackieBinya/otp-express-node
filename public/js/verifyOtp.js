@@ -1,13 +1,13 @@
 const verifyOtpForm = document.querySelector("#verifyOtpForm");
 
-const verifyOtpFormSuccessMessage = createOtpForm.querySelectorAll("span.success-message")[0];
-const verifyOtpFormErrorMessage = createOtpForm.querySelectorAll("span.error-message")[0];
+const verifyOtpFormSuccessMessage = verifyOtpForm.querySelectorAll("span.success-message")[0];
+const verifyOtpFormErrorMessage = verifyOtpForm.querySelectorAll("span.error-message")[0];
 
 verifyOtpForm.addEventListener("submit", async(e) => {
     try {
       e.preventDefault();
 
-    const formData = new FormData(createOtpForm);
+    const formData = new FormData(verifyOtpForm);
 
     const data = Object.fromEntries(formData);
 

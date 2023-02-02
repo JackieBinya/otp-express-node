@@ -6,29 +6,56 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-.container,.container-secondary{
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: green;
   max-width: 90%;
   margin: 0rem auto;
   font-size: 0.9rem;
-}
-
-.container-secondary {
   background-color: whitesmoke;
-  padding: 1em;
+  height: 100vh;
 }
 
-@media only screen and (min-width: 1025px) {
-  .container-secondary {
-    max-width: 70%;
-    min-height: 75vh;
-  }
+.container {
+  padding: 1em;
+  height: 40vh;
+  max-width: 70%;
+}
+
+form{
+  padding-top: 2em;
+}
+
+button[type=submit]{
+  display: block;
+  margin: 2em auto;
+  padding: 0.5em;
+  width: 80%;
+  height: 4em;
+  text-align: center;
+  cursor: pointer;
+}
+
+input {
+  width: 100%;
+  margin: 1em 0;
+  height: 4em;
+  padding: 0.5em;
 }
 
 span.success-message, span.error-message  {
+  display: block;
+  padding: 0 0 0.8em 0;
   font-size: small;
   font-weight: 500;
 }
 
 span.error-message {
   color: crimson;
+}
+
+span.success-message {
+  color: green;
 }
