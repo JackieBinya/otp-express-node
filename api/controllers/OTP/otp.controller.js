@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 import Otp from '../../models/Otp.js';
 import { sendMail } from '../../services/emails/email.service.js';
 import { templates } from '../../services/emails/templates/index.js';
+import ResetOtp from '../../models/ResetOtp.js';
 
 const createOtp = async (req, res) => {
 	try {
@@ -210,12 +211,12 @@ const resendOtp = async (req, res) => {
 			});
 		}
 
+		// Check reset window hast been lapsed
 		const oldOtpIssueDate = otpItem['created_at'];
 
 		const expirationOfOldOtp = add(oldOtpIssueDate, {
-			minutes: process.env.OTP_LIFE_SPAN_IN_MINUTES,
+			minutes: process.env.OTP_RESET_WINDOW_IN_MINUTES,
 		});
-		console.log('🌕🌕🌕🌕', expirationOfOldOtp);
 
 		if (!isBefore(new Date(), expirationOfOldOtp)) {
 			return res.status(400).json({
@@ -224,19 +225,37 @@ const resendOtp = async (req, res) => {
 			});
 		}
 
+		// Check if the otp is unused
 		if (otpItem.is_used) {
 			return res.status(400).json({
 				success: false,
 				error: 'The submitted OTP has been used, please request a new OTP',
 			});
 		}
-		console.log(`🦄🦄🦄🦄 Re-sending the old otp to ${email}`);
+
+		// Check number of times the user has asked the same OTP to be reset
+		const resetOtpsCount = await ResetOtp.findAll({
+			where: {
+				email,
+				otp,
+			}
+		});
+
+		if(resetOtpsCount.length > process.env.OTP_MAX_NUMBER_OF_RESET ){
+			return res.status(400).json({
+				success: false,
+				error: 'Maximum number of attempts exceeded for OTP resets,please request a new OTP ',
+			});
+		}
+		
+		// Send the reset OTP to the user via email
 		await sendMail({
 			to: email,
 			subject: 'Reset One Time Password - OTP',
 			body: templates.otpIssuedEmailTemplate({ otp }),
 		});
 
+		//Update OTP created_at time
 		await Otp.update(
 			{ created_at: new Date() },
 			{
@@ -245,6 +264,13 @@ const resendOtp = async (req, res) => {
 				},
 			}
 		);
+
+		// Write ResetOtp record in db
+		await ResetOtp.create({
+			email,
+			otp,
+			'created_at': new Date()
+		});
 
 		return res.status(200).json({
 			success: true,
