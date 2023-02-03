@@ -71,7 +71,7 @@ const createOtp = async (req, res) => {
 			body: templates.otpIssuedEmailTemplate({ otp: newOtp }),
 		});
 		// Write otp record in the db
-		const record = await Otp.create({
+		await Otp.create({
 			email: req.body.email,
 			otp: newOtp,
 			created_at: new Date(),
@@ -79,6 +79,10 @@ const createOtp = async (req, res) => {
 
 		return res.status(201).json({
 			success: true,
+			data: {
+				email,
+				otp: newOtp
+			}
 		});
 	} catch (error) {
 		console.log(error);
@@ -167,7 +171,7 @@ const verifyOtp = async (req, res) => {
 
 		return res.status(200).json({
 			success: true,
-			message: 'OTP has been verified successfully',
+			
 		});
 	} catch (error) {
 		console.log(error);

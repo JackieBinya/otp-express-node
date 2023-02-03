@@ -18,6 +18,10 @@ body {
 	height: 100vh;
 }
 
+button{ 
+	cursor: pointer;
+}
+
 .container {
 	padding: 1em;
 	height: 40vh;
@@ -35,7 +39,6 @@ button[type='submit'] {
 	width: 80%;
 	height: 4em;
 	text-align: center;
-	cursor: pointer;
 	font-weight: 500;
 }
 
@@ -66,10 +69,33 @@ span.success-message {
 	color: green;
 }
 
-#resend-otp-btn {
-	display: none;
-}
-
 .emoji{
 	font-size: 2em;
 }
+
+.resend-otp-container{
+	display: none;
+	padding: 0.5em;
+}
+
+.resend-otp-container > span {
+	display: inline-block;
+}
+
+.resend-otp-container > span , #resend-otp-btn{
+	padding: 1em;
+}
+
+#resend-otp-btn{
+	border-width: 0px;
+} 
+
+.success-message, error-message{
+	display: inline-block;
+	padding: 0.5em;
+}
+
+#resend-otp-btn:hover {
+	background-color: gray; /* Green */
+	color: white;
+  }
