@@ -81,8 +81,8 @@ const createOtp = async (req, res) => {
 			success: true,
 			data: {
 				email,
-				otp: newOtp
-			}
+				otp: newOtp,
+			},
 		});
 	} catch (error) {
 		console.log(error);
@@ -171,7 +171,6 @@ const verifyOtp = async (req, res) => {
 
 		return res.status(200).json({
 			success: true,
-			
 		});
 	} catch (error) {
 		console.log(error);
@@ -242,16 +241,16 @@ const resendOtp = async (req, res) => {
 			where: {
 				email,
 				otp,
-			}
+			},
 		});
 
-		if(resetOtpsCount.length > process.env.OTP_MAX_NUMBER_OF_RESET ){
+		if (resetOtpsCount.length > process.env.OTP_MAX_NUMBER_OF_RESET) {
 			return res.status(400).json({
 				success: false,
 				error: 'Maximum number of attempts exceeded for OTP resets,please request a new OTP ',
 			});
 		}
-		
+
 		// Send the reset OTP to the user via email
 		await sendMail({
 			to: email,
@@ -273,7 +272,7 @@ const resendOtp = async (req, res) => {
 		await ResetOtp.create({
 			email,
 			otp,
-			'created_at': new Date()
+			created_at: new Date(),
 		});
 
 		return res.status(200).json({

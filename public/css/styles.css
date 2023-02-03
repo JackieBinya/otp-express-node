@@ -18,7 +18,7 @@ body {
 	height: 100vh;
 }
 
-button{ 
+button {
 	cursor: pointer;
 }
 
@@ -69,11 +69,11 @@ span.success-message {
 	color: green;
 }
 
-.emoji{
+.emoji {
 	font-size: 2em;
 }
 
-.resend-otp-container{
+.resend-otp-container {
 	display: none;
 	padding: 0.5em;
 }
@@ -82,15 +82,17 @@ span.success-message {
 	display: inline-block;
 }
 
-.resend-otp-container > span , #resend-otp-btn{
+.resend-otp-container > span,
+#resend-otp-btn {
 	padding: 1em;
 }
 
-#resend-otp-btn{
+#resend-otp-btn {
 	border-width: 0px;
-} 
+}
 
-.success-message, error-message{
+.success-message,
+error-message {
 	display: inline-block;
 	padding: 0.5em;
 }
@@ -98,4 +100,4 @@ span.success-message {
 #resend-otp-btn:hover {
 	background-color: gray; /* Green */
 	color: white;
-  }
+}

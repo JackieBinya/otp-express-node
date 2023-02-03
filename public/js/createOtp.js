@@ -37,7 +37,7 @@ createOtpForm.addEventListener('submit', async (e) => {
 				'OTP has been successfully sent to your email.';
 
 			resetOtpData = {
-				...res.data
+				...res.data,
 			};
 
 			resendOtpContainer.style.display = 'block';
@@ -50,11 +50,11 @@ createOtpForm.addEventListener('submit', async (e) => {
 	}
 });
 
-resendOtpBtn.addEventListener('click', async e =>{
+resendOtpBtn.addEventListener('click', async (e) => {
 	try {
 		createOtpFormSuccessMessage.textContent = '';
 		createOtpFormErrorMessage.textContent = '';
-			
+
 		const response = await fetch('/otp/resend', {
 			method: 'POST',
 			headers: {
@@ -65,22 +65,21 @@ resendOtpBtn.addEventListener('click', async e =>{
 
 		const res = await response.json();
 
-			if (!res.success) {
-				createOtpFormSuccessMessage.textContent = '';
-				createOtpFormErrorMessage.textContent = res.error;
-			}
+		if (!res.success) {
+			createOtpFormSuccessMessage.textContent = '';
+			createOtpFormErrorMessage.textContent = res.error;
+		}
 
-			if (res.success) {
-				createOtpFormErrorMessage.textContent = '';
-				createOtpFormSuccessMessage.textContent =
-					'Your OTP has been successfully reset and sent to your email';
-			}
-		
+		if (res.success) {
+			createOtpFormErrorMessage.textContent = '';
+			createOtpFormSuccessMessage.textContent =
+				'Your OTP has been successfully reset and sent to your email';
+		}
 	} catch (error) {
 		console.log({ error });
 		createOtpFormSuccessMessage.textContent = '';
 		createOtpFormErrorMessage.textContent =
-			'Something happened, please try again later!';	
+			'Something happened, please try again later!';
 	}
 });
 
@@ -88,7 +87,5 @@ document.addEventListener('keydown', (e) => {
 	createOtpFormErrorMessage.textContent = '';
 	createOtpFormSuccessMessage.textContent = '';
 	resendOtpContainer.style.display = 'none';
-	resetOtpData={};
-
-	console.log('🟣🟣🟣🟣', resetOtpData)
+	resetOtpData = {};
 });
