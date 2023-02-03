@@ -35,7 +35,7 @@ verifyOtpForm.addEventListener('submit', async (e) => {
 			if (
 				!res.success &&
 				res.error ===
-					'The submitted OTP has expired, please request a new OTP'
+					'The submitted OTP has expired'
 			) {
 				actionBtn.dataset.action = 'resend';
 				resendOtpBtn.style.display = 'inline';

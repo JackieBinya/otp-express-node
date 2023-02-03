@@ -137,7 +137,7 @@ const verifyOtp = async (req, res) => {
 		if (!isBefore(new Date(), expirationTimeForOtpItem)) {
 			return res.status(403).json({
 				success: false,
-				error: `The submitted OTP has expired, please request a new OTP`,
+				error: `The submitted OTP has expired`,
 			});
 		}
 		// Check if user submitted the latest OTP

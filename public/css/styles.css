@@ -36,6 +36,8 @@ button[type='submit'] {
 	height: 4em;
 	text-align: center;
 	cursor: pointer;
+	font-size: 1.2em;
+	font-weight: 500;
 }
 
 input {
@@ -67,4 +69,8 @@ span.success-message {
 
 #resend-otp-btn {
 	display: none;
+}
+
+.emoji{
+	font-size: 2em;
 }
